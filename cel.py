@@ -24,8 +24,9 @@ def adder(a, b):
     return res
 
 
+############################################################# PATCH ############################################################
 """
-This function is a patch of the `kombu.Producer._publish`[1] method that is responsible for publishing messages to RabbitMQ.
+This is a patch of the `kombu.Producer._publish`[1] method that is responsible for publishing messages to RabbitMQ.
 We patch this method so that we are able to switch different BROKER_URL's based on some condition at runtime.
 
 ref:
@@ -94,6 +95,8 @@ def _my_publish_patch(
 
 # patch the publish method
 Producer._publish = _my_publish_patch
+############################################################# PATCH ############################################################
+
 
 if __name__ == "__main__":
     # publish some tasks
