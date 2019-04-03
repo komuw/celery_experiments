@@ -1,0 +1,12 @@
+version: '3'
+services:
+
+  rabbitmq1:
+    image: rabbitmq:3.7.7-management-alpine
+    ports:
+      - 7777:5672
+
+  rabbitmq2:
+    image: rabbitmq:3.7.7-management-alpine
+    ports:
+      - 8888:5672
