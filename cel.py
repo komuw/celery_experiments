@@ -4,7 +4,7 @@ import celery
 """
 run as:
     1. python cel.py
-    2. celery worker -A cel:celery_obj --concurrency=1 --loglevel=DEBUG
+    2. celery worker -A cel:celery_obj --concurrency=1 --pool=gevent --loglevel=DEBUG
 """
 
 
