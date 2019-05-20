@@ -5,3 +5,19 @@ services:
     image: rabbitmq:3.7.7-management-alpine
     ports:
       - 7777:5672
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - 9090:9090
+
+  push_to_gateway:
+    image: prom/pushgateway
+    container_name: push_to_gateway
+    ports:
+      - 9091:9091
