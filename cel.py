@@ -4,7 +4,7 @@ import prometheus_client
 """
 run as:
     1. python cel.py
-    2. celery worker -A cel:celery_obj --concurrency=1 --pool=gevent --loglevel=DEBUG
+    2. celery worker -A cel:celery_obj --concurrency=100 --pool=gevent --loglevel=DEBUG
 """
 
 
@@ -22,14 +22,14 @@ metric_counter = prometheus_client.Counter(
 )
 
 
-@celery_obj.task(name="adder", rate_limit="25/s")
+@celery_obj.task(name="adder", rate_limit="10/s")
 def adder(a, b):
     """
     task that adds two numbers.
     when it is ran by celery workers; it also keeps metrics of number of times it was executed.
 
     You can find the rate of execution with a query like:
-      rate(number_of_tasks_total{task_name="adder"}[30s])
+      rate(number_of_tasks_total{task_name="adder"}[30s]) # find task processing rate(tasks per second) over the past 30seconds
     """
     res = a + b
     print("res: ", res)
@@ -41,8 +41,8 @@ def adder(a, b):
 
 
 if __name__ == "__main__":
-    # publish some tasks
-    for i in range(1, 1000):
+    # publish 10K tasks
+    for i in range(1, 10000):
         adder.delay(a=45, b=i)
 
     print("celery_obj.conf.BROKER_URL", celery_obj.conf.BROKER_URL)
