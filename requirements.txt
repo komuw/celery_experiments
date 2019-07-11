@@ -8,3 +8,8 @@ prometheus_client==0.6.0
 #black==19.3b0
 flake8==3.7.7
 #pylint==2.3.1
+
+# required to track task success/failure rates
+redis==3.2.1
+
+
