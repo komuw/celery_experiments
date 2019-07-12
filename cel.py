@@ -11,7 +11,7 @@ run as:
 
 
 # broker
-CELERY_BROKER_URL = "amqp://guest:guest@localhost:7777//"
+CELERY_BROKER_URL = "amqp://guest:guest@localhost:5672//"
 celery_obj = celery.Celery(broker=CELERY_BROKER_URL)
 
 

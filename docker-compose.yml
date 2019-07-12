@@ -9,7 +9,8 @@ services:
   rabbitmq1:
     image: rabbitmq:3.7.7-management-alpine
     ports:
-      - 7777:5672
+      - 5672:5672
+      - 15672:15672
 
   prometheus:
     image: prom/prometheus:latest
