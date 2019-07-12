@@ -34,7 +34,7 @@ def adder(a, b):
     when it is ran by celery workers; it also keeps metrics of number of times it was executed.
 
     You can find the rate of execution with a query like:
-      rate(number_of_tasks_total{task_name="adder"}[30s]) # find task processing rate(tasks per second) over the past 30seconds
+      rate(number_of_tasks_total{task_name="adder"}[120s])  # find task processing rate(tasks per second) over the past 30seconds
     """
     res = a + b
     print("\t res: ", res)
