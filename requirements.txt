@@ -5,3 +5,6 @@ gevent==1.2.2
 #black==19.3b0
 flake8==3.7.7
 #pylint==2.3.1
+
+# required to store executed tasks
+redis==3.2.1
