@@ -157,7 +157,6 @@ class KomuCustomRateLimiter:
         return _time  # seconds
 
 
-################################ CUSTOM RATELIMITER ###########################################
 from celery.worker.consumer.consumer import Consumer
 
 
@@ -172,6 +171,7 @@ def _patched_reset_rate_limits(celery_Consumer_obj):
     print()
 
 
+# patch celery to use custom ratelimiter
 Consumer.reset_rate_limits = _patched_reset_rate_limits
 ################################ CUSTOM RATELIMITER ###########################################
 
