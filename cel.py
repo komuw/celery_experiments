@@ -55,15 +55,14 @@ def adder(a, b):
 class KomuCustomRateLimiter:
     def __init__(self):
         """
-        usage:
-            class Consumer:
-                # celery/worker/consumer/consumer.py
-                def reset_rate_limits(self):
-                    self.task_buckets.update(
-                        (n, self.bucket_for_task(t)) for n, t in items(self.app.tasks)
-                    )
-                    # use custom ratelimiter for the `adder` task
-                    self.task_buckets['adder'] = KomuCustomRateLimiter()
+        class Consumer:
+            # celery/worker/consumer/consumer.py
+            def reset_rate_limits(self):
+                self.task_buckets.update(
+                    (n, self.bucket_for_task(t)) for n, t in items(self.app.tasks)
+                )
+                # use custom ratelimiter for the `adder` task
+                self.task_buckets['adder'] = KomuCustomRateLimiter()
         """
         import redis
         from collections import deque
