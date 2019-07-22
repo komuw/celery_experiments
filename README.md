@@ -22,7 +22,7 @@ usage:
 ```        
 
 
-#### 2. Branch: [adaptive-rate-limits](https://github.com/komuw/celery_experiments/tree/adaptive-rate-limits)  
+#### 3. Branch: [adaptive-rate-limits](https://github.com/komuw/celery_experiments/tree/adaptive-rate-limits)  
 Patch celery to use a custom adaptive rate limiter.  
 usage:  
 ```bash
@@ -31,3 +31,12 @@ usage:
 3. celery worker -A cel:celery_obj --concurrency=20 --pool=gevent --loglevel=DEBUG # run workers
 ```      
 
+
+#### 4. Branch: [issues/4426](https://github.com/komuw/celery_experiments/tree/issues/4426)  
+Patch celery to prevent [issues/4426](https://github.com/celery/celery/issues/4426), `Task is executed twice when the worker restarts/deployments`  
+usage:  
+```bash
+1. docker-compose up
+2. python cel.py # queue tasks
+3. celery worker -A cel:celery_obj --concurrency=20 --pool=gevent --loglevel=DEBUG # run workers
+```      
