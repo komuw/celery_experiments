@@ -54,6 +54,20 @@ def network_task(self):
     return res
 
 
+################################ SYNC ACK PATCH ###########################################
+from celery.worker.request import Request
+
+# make acknowledgments to be synchronous instead of using promise
+def new_acknowledge(self):
+    """Acknowledge task."""
+    if not self.acknowledged:
+        self.message.ack()
+        self.acknowledged = True
+
+
+Request.acknowledge = new_acknowledge
+################################ SYNC ACK PATCH ###########################################
+
 ########################################################################################################################################
 # 1.
 # /home/komuw/mystuff/celery_experiments/.venv/lib/python2.7/site-packages/celery/worker/strategy.py
