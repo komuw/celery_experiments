@@ -38,5 +38,5 @@ usage:
 ```bash
 1. docker-compose up
 2. python cel.py # queue tasks
-3. celery worker -A cel:celery_obj --concurrency=20 --pool=gevent --loglevel=DEBUG # run workers
+3. celery worker -A cel:celery_obj --concurrency=2 --pool=gevent --loglevel=DEBUG # run workers
 ```      
