@@ -55,6 +55,12 @@ def adder(a, b):
 class KomuCustomRateLimiter:
     def __init__(self):
         """
+        This rateLimiter;
+        1. fetches error rates and success rates from a redis instance.
+        2. it uses that to calculate the current failure rate
+        3. If the percentage failure rate is above a certain percentage;
+            (a) it inhibits the celery worker from processing anymore requests
+        
         class Consumer:
             # celery/worker/consumer/consumer.py
             def reset_rate_limits(self):
