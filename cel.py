@@ -52,6 +52,10 @@ def adder(a, b):
 
 
 ################################ CUSTOM RATELIMITER ###########################################
+# Instead of using this interface which can be problematic, 
+# you could use `celery.app.control.Control.rate_limit` 
+# https://docs.celeryproject.org/en/4.4.2/reference/celery.app.control.html#celery.app.control.Control.rate_limit
+
 class KomuCustomRateLimiter:
     def __init__(self):
         """
