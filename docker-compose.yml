@@ -5,3 +5,5 @@ services:
     image: rabbitmq:3.7.7-management-alpine
     ports:
       - 7777:5672
+      - 7778:15672
+
