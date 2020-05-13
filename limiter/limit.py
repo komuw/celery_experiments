@@ -323,7 +323,8 @@ class Limiter:
             }
             print("\n\n\t {0}\n\n".format(log_data))
             self.celery_app.control.rate_limit(
-                task_name=self.task_name, rate_limit=rate_limit_per_sec
+                task_name=self.task_name, rate_limit=rate_limit_per_sec,
+                timeout=0.5# seconds
             )
         else:
             return

@@ -8,7 +8,7 @@ from limiter import limit
 run as:
     1. python cel.py
     2. celery worker -A cel:celery_obj --concurrency=6 --loglevel=INFO
-    3. celery worker -A cel:celery_obj --concurrency=20 --loglevel=INFO --pool=gevent
+    3. celery worker -A cel:celery_obj --concurrency=200 --loglevel=INFO --pool=gevent
 """
 
 
@@ -46,10 +46,10 @@ def adder(a, b):
         end = time.monotonic()
         latency = end - start
 
-        if 400 < res < 410:
-            latency = 801
-        if 700 < res < 705:
-            latency = 1023
+        # if 400 < res < 410:
+        #     latency = 801
+        # if 700 < res < 705:
+        #     latency = 1023
 
         my_limiter.updateAndGetRateLimit(latency=latency, error=None)
 
