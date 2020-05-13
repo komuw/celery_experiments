@@ -7,7 +7,7 @@ from limiter import limit
 """
 run as:
     1. python cel.py
-    2. celery worker -A cel:celery_obj --concurrency=1 --loglevel=DEBUG
+    2. celery worker -A cel:celery_obj --concurrency=1 --loglevel=INFO
 """
 
 
@@ -22,13 +22,16 @@ my_limiter = limit.Limiter(
     sampling_period=3 * 60,  # seconds
     breach_latency=700,  # milliSeconds
     breach_error_percent=5,  # percent
-    max_rate_limit=5,  # reqs/sec
+    max_rate_limit=12,  # reqs/sec
     noteworthy_exceptions=[BlockingIOError, TimeoutError],
-    control_celery_rate_limit_interval=20,  # seconds
+    control_celery_rate_limit_interval=3,  # seconds,
+    # ADDITION
+    celery_app=celery_obj,
+    task_name="my_adder_task_name",
 )
 
 
-@celery_obj.task(name="adder_task")
+@celery_obj.task(name="my_adder_task_name", rate_limit="1/m")
 def adder(a, b):
     res = None
     error = None
@@ -41,17 +44,23 @@ def adder(a, b):
     finally:
         end = time.monotonic()
         latency = end - start
-        my_limiter.updateAndGetRateLimit(latency=latency, error=error)
+
+        if 400 < res < 410:
+            latency = 801
+        if 700 < res < 705:
+            latency = 1023
+
+        my_limiter.updateAndGetRateLimit(latency=latency, error=None)
 
         return res
 
 
 if __name__ == "__main__":
     # publish some tasks
-    for i in range(10_000):
-        adder.delay(a=i, b=141)
-        adder.delay(a=124, b=i)
-        adder.delay(a=i, b=26)
+    for i in range(1_000):
+        adder.delay(a=i, b=3)
+        # adder.delay(a=124, b=i)
+        # adder.delay(a=i, b=26)
     print("celery_obj.conf.BROKER_URL", celery_obj.conf.BROKER_URL)
     print("celery_obj.conf.conf.BROKER_TRANSPORT", celery_obj.conf.BROKER_TRANSPORT)
     print("!!! adder messages enqueued !!!")

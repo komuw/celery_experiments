@@ -69,8 +69,19 @@ class _Error:
 
 class Limiter:
     """
+    It is important that tasks start with a very low rate limit by default.
+    This can be done by setting `task_default_rate_limit`[1] 
+    or
+        @celery_app.task(name="my_adder_task_name", rate_limit="0.02/s")
+        def adder(a, b):
+            res = a + b
+            return res
+            
     Error Motto:
       If this limiter is to err, it should err on the side of letting more requests flow rather than less
+    
+    References:
+    1. https://docs.celeryproject.org/en/stable/userguide/configuration.html#std:setting-task_default_rate_limit
     """
 
     def __init__(
@@ -83,6 +94,9 @@ class Limiter:
         max_rate_limit: int,
         noteworthy_exceptions: typing.List[Exception],
         control_celery_rate_limit_interval: int,
+        # TODO: document this plus type hints
+        celery_app,
+        task_name,
     ) -> None:
         """
         Parameters:
@@ -137,11 +151,22 @@ class Limiter:
 
         if control_celery_rate_limit_interval <= 0:
             raise ValueError("`control_celery_rate_limit_interval` cannot be zero or negative.")
-        jitter = random.randint(60, 90)
+        # jitter is an extra precaution so that not all workers are rushing to change the
+        # limit of the same task at the exact same time.
+        # TODO:
+        # - test what would happen if there is a race condition in updating rate limit of same task.
+        # - document the results.
+        # - maybe also bake it into a testcase
+        # one way to carry out the experiment is to spawn multiple(1000) threads in python
+        # that each call the celery ratelimit api.
+        jitter = random.randint(3, 8)
         self.control_celery_rate_limit_interval = control_celery_rate_limit_interval + jitter
 
         self.current_state = _State.SLOW_START
         self.updated_celery_at: float = time.monotonic()
+
+        self.celery_app = celery_app
+        self.task_name = task_name
 
     @staticmethod
     def _percentile(N: list, percent: float) -> None:
@@ -279,9 +304,27 @@ class Limiter:
         now = time.monotonic()
         time_since_updating_celery = now - self.updated_celery_at
         if time_since_updating_celery >= self.control_celery_rate_limit_interval:
-            # TODO: call appropriate celery control command
-            # celery.rate_limit("self.task_name", rate_limit, destination=None, **kwargs)
-            pass
+            self.updated_celery_at = now  # important
+
+            rate_limit_per_sec = "{0:.2f}/s".format(rate_limit)
+            log_data = {
+                "event": "call_celery_rate_limit",
+                "task_name": self.task_name,
+                "current_rate_limit": rate_limit_per_sec,
+                "max_rate_limit": "{0}/s".format(self.MAX_RATE_LIMIT),
+                "current_error_rate": "{0}%".format(self._get_error_rate()),
+                "breach_error_rate": "{0}%".format(self.BREACH_ERROR_RATE),
+                "current_p99_latency": "{0:.2f}ms".format(self._get_p99_latency()),
+                "breach_latency": "{0}ms".format(self.BREACH_LATENCY),
+                "control_celery_rate_limit_interval": "{0:.2f}s".format(
+                    self.control_celery_rate_limit_interval
+                ),
+                "time_since_updating_celery": "{0:.2f}s".format(time_since_updating_celery),
+            }
+            print("\n\n\t {0}\n\n".format(log_data))
+            self.celery_app.control.rate_limit(
+                task_name=self.task_name, rate_limit=rate_limit_per_sec
+            )
         else:
             return
 
@@ -301,39 +344,36 @@ class Limiter:
             return self.MAX_RATE_LIMIT
 
 
-# ### app
-# import time
-# import requests
+import threading, multiprocessing
 
-# x = Limiter()
-# print("intial limit: ", x._limit())
-# # for i in range(0, 10):
-# #     x.updateAndGetRateLimit(latency=i, error=None)
 
-# print(" limit 2: ", x._limit())
+class TEST_RATELIMIT_RACE_CONDITION:
+    """
+    https://docs.python.org/3.6/library/multiprocessing.html
+    """
 
-# # for i in range(0, 100):
-# #     x.updateAndGetRateLimit(latency=i, error=ValueError("kk"))
+    def __init__(self, celery_app, task_name):
+        self.celery_app = celery_app
+        self.task_name = task_name
+        self.race_condition_tester_rate_limit_per_sec = "0.67/s"
 
-# x.updateAndGetRateLimit(latency=0.00006, error=None)
-# import pdb
+    def _test_ratelimit_race_condition(self):
+        self.celery_app.control.rate_limit(
+            task_name=self.task_name, rate_limit=self.race_condition_tester_rate_limit_per_sec
+        )
+        msg = "_test_ratelimit_race_condition called END."
+        print(msg)
+        return msg
 
-# pdb.set_trace()
-# print(" limit 3: ", x._limit())
+    def _multiprocessing(self):
+        num_processes = 100
+        with multiprocessing.Pool(num_processes) as p:
+            # launching multiple evaluations asynchronously *may* use more processes
+            multiple_results = [
+                p.apply_async(self._test_ratelimit_race_condition, ()) for i in range(num_processes)
+            ]
+            get_all = [res.get(timeout=0.5) for res in multiple_results]
+            print(get_all)
 
-# # start = time.monotonic()
-# # error = None
-# # try:
-# #     url = "https://httpbin.org/delay/5"
-# #     requests.get(url)
-# # except Exception as e:
-# #     error = e
-# # finally:
-# #     end = time.monotonic()
-# #     dur = end - start
-
-# #     x.updateAndGetRateLimit(latency=dur, error=error)
-
-# # print("dda")
-# # print("dda")
-# # print("rwd")
+    def start(self):
+        self._multiprocessing()
