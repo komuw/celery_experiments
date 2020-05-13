@@ -7,7 +7,8 @@ from limiter import limit
 """
 run as:
     1. python cel.py
-    2. celery worker -A cel:celery_obj --concurrency=1 --loglevel=INFO
+    2. celery worker -A cel:celery_obj --concurrency=6 --loglevel=INFO
+    3. celery worker -A cel:celery_obj --concurrency=20 --loglevel=INFO --pool=gevent
 """
 
 
