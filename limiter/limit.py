@@ -202,7 +202,7 @@ class Limiter:
         We only consider latencies of requests that happened in the last `self.sampling_period` seconds.
         The service we are talking to may have been having a bad time 10hrs ago, but now it is okay;
         we do not want the bad latencies it had 10hrs ago to be factored in. If however that is the behaviour
-        you actually want, intially the limiter with a `sampling_period` longer than 10hrs.
+        you actually want, intialize the limiter with a `sampling_period` longer than 10hrs.
 
         We also only make a decision if there were at least `min_sample_size` requests in the last `sampling_period` seconds.
         If there are not, then we assume p99 latency was 0.0
