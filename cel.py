@@ -51,7 +51,7 @@ def adder(a, b):
         # if 700 < res < 705:
         #     latency = 1023
 
-        my_limiter.updateAndGetRateLimit(latency=latency, error=None)
+        my_limiter.updateAndGetRateLimit(latency=latency, error=error)
 
         return res
 
