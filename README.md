@@ -39,4 +39,14 @@ usage:
 1. docker-compose up
 2. python cel.py # queue tasks
 3. celery worker -A cel:celery_obj --concurrency=2 --pool=gevent --loglevel=DEBUG # run workers
-```      
+```       
+
+
+
+#### 5. Branch: [custom-rate-limiter](https://github.com/komuw/celery_experiments/tree/custom-rate-limiter)   
+Create a custom rate limiter that is insipired by TCP congestion control algorithms.
+```bash
+1. docker-compose up
+2. python cel.py # queue tasks
+3. celery worker -A cel:celery_obj --concurrency=200 --pool=gevent --loglevel=INFO # run workers
+```  
