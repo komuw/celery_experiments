@@ -6,6 +6,88 @@ import random
 import collections
 
 
+
+def sample_anomalous(samples):
+    """
+    Sampling:
+    - Central limit theorem(Alan Turing)
+    - 3-sigma rule: In a normal distribution, 99.7% of the values are not anomalous.
+        Which means you can throw away 99.7% without losing context.
+    - You may also use 2-sigma(95%) or 1-sigma(68%)
+
+    see:
+    1. https://youtu.be/inrqE0Grgk0?t=26080
+    2. https://en.wikipedia.org/wiki/68%E2%80%9395%E2%80%9399.7_rule
+    
+    return anomalous spans
+    """
+    import statistics
+
+    mean = sum(samples) / len(samples)
+    stdev = statistics.stdev(samples)
+    plus_1_standardDeviations = mean + (1 * stdev)
+    minus_1_standardDeviations = mean - (1 * stdev)
+    plus_2_standardDeviations = mean + (2 * stdev)
+    minus_2_standardDeviations = mean - (2 * stdev)
+    plus_3_standardDeviations = mean + (3 * stdev)
+    minus_3_standardDeviations = mean - (3 * stdev)
+
+    def one_sigma(samples, plus_1_standardDeviations, minus_1_standardDeviations):
+        above = []
+        below = []
+        nonAnomalous = []
+        anomalous = []
+        for s in samples:
+            if s >= plus_1_standardDeviations:
+                above.append(s)
+            elif s <= minus_1_standardDeviations:
+                below.append(s)
+            else:
+                nonAnomalous.append(s)
+        anomalous = above + below
+        return anomalous
+
+    def two_sigma(samples, plus_2_standardDeviations, minus_2_standardDeviations):
+        above = []
+        below = []
+        nonAnomalous = []
+        anomalous = []
+        for s in samples:
+            if s >= plus_2_standardDeviations:
+                above.append(s)
+            elif s <= minus_2_standardDeviations:
+                below.append(s)
+            else:
+                nonAnomalous.append(s)
+        anomalous = above + below
+        return anomalous
+
+    def three_sigma(samples, plus_3_standardDeviations, minus_3_standardDeviations):
+        above = []
+        below = []
+        nonAnomalous = []
+        anomalous = []
+        for s in samples:
+            if s >= plus_3_standardDeviations:
+                above.append(s)
+            elif s <= minus_3_standardDeviations:
+                below.append(s)
+            else:
+                nonAnomalous.append(s)
+        anomalous = above + below
+        return anomalous
+
+    _one_sigma = one_sigma(samples, plus_1_standardDeviations, minus_1_standardDeviations)
+    _two_sigma = two_sigma(samples, plus_2_standardDeviations, minus_2_standardDeviations)
+    _three_sigma = three_sigma(samples, plus_3_standardDeviations, minus_3_standardDeviations)
+    return _one_sigma, _two_sigma, _three_sigma
+
+
+latency_samples = [1, 8.5, 9.1, 9.3, 9.4, 9.5, 6.4, 9.7, 9.9, 9.9]
+_one_sigma, _two_sigma, _three_sigma = sample_anomalous(latency_samples)
+print("_one_sigma, _two_sigma, _three_sigma: ", _one_sigma, _two_sigma, _three_sigma)
+
+
 @enum.unique
 class _State(enum.Enum):
     SLOW_START: int = 1
