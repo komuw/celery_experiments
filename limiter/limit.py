@@ -16,7 +16,7 @@ def sample_anomalous(samples):
     - You may also use 2-sigma(95%) or 1-sigma(68%)
 
     see:
-    1. https://youtu.be/inrqE0Grgk0?t=26080
+    1. https://youtu.be/inrqE0Grgk0?t=26080 (Emmanuel T Odeke)
     2. https://en.wikipedia.org/wiki/68%E2%80%9395%E2%80%9399.7_rule
     
     return anomalous spans
