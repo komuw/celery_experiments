@@ -1,9 +1,5 @@
 ### usage:
 
-Also look into Additive-increase/Multiplicative-decrease(AIMD). 
-![Screenshot from 2024-01-26 14-00-38](https://github.com/komuw/celery_experiments/assets/5163857/cf5fb24a-bdb5-4bf9-8f10-95b040cb2ab9) ; 
-[https://www.youtube.com/watch?v=PiVFygc7B50 ](https://youtu.be/PiVFygc7B50?t=838)
-
 
 #### 1. Branch: [broker-change](https://github.com/komuw/celery_experiments/tree/broker-change)   
 Show how to change celery broker at runtime.    
@@ -54,4 +50,36 @@ Create a custom rate limiter that is insipired by TCP congestion control algorit
 1. docker-compose up
 2. python cel.py # queue tasks
 3. celery worker -A cel:celery_obj --concurrency=200 --pool=gevent --loglevel=INFO # run workers
-```  
+```
+
+#### 6. Also look into Additive-increase/Multiplicative-decrease(AIMD). 
+![Screenshot from 2024-01-26 14-00-38](https://github.com/komuw/celery_experiments/assets/5163857/cf5fb24a-bdb5-4bf9-8f10-95b040cb2ab9) ; 
+[https://www.youtube.com/watch?v=PiVFygc7B50 ](https://youtu.be/PiVFygc7B50?t=838)
+```go
+func aimd() {
+	var limit = 1.0
+
+	err := doSomething()
+	if err == nil {
+		limit = limit + 1
+	} else {
+		limit = limit * 0.9
+	}
+}
+
+func aimdSlowStart() {
+	var limit = 1.0
+	var slowStart = 100.0
+
+	err := doSomething()
+	if err == nil {
+		if limit >= slowStart {
+			limit = limit + (1 / limit)
+		} else {
+			limit = limit + 1
+		}
+	} else {
+		limit = limit * 0.9
+	}
+}
+```
