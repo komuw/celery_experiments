@@ -56,6 +56,9 @@ Create a custom rate limiter that is insipired by TCP congestion control algorit
 ![Screenshot from 2024-01-26 14-00-38](https://github.com/komuw/celery_experiments/assets/5163857/cf5fb24a-bdb5-4bf9-8f10-95b040cb2ab9) ; 
 [https://www.youtube.com/watch?v=PiVFygc7B50 ](https://youtu.be/PiVFygc7B50?t=838)
 ```go
+// There's a problem with the following algos; they have no co-ordination between process. So you can't know the true global capacity.
+// But that is actually a feature(not a bug).
+
 func aimd() {
 	var limit = 1.0
 
