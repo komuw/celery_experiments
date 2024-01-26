@@ -1,5 +1,10 @@
 ### usage:
 
+Also look into Additive-increase/Multiplicative-decrease(AIMD). 
+![Screenshot from 2024-01-26 14-00-38](https://github.com/komuw/celery_experiments/assets/5163857/cf5fb24a-bdb5-4bf9-8f10-95b040cb2ab9) ; 
+[https://www.youtube.com/watch?v=PiVFygc7B50 ](https://youtu.be/PiVFygc7B50?t=838)
+
+
 #### 1. Branch: [broker-change](https://github.com/komuw/celery_experiments/tree/broker-change)   
 Show how to change celery broker at runtime.    
 This can even enable you to run with more than one broker concurrently.
