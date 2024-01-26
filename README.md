@@ -82,4 +82,22 @@ func aimdSlowStart() {
 		limit = limit * 0.9
 	}
 }
+
+func aimdSlowerStart() {
+	var limit = 1.0
+	var slowStart = 99_999_999.0
+
+	err := doSomething()
+	if err == nil {
+		if limit >= slowStart {
+			limit = limit + (1 / limit)
+		} else {
+			limit = limit + 1
+		}
+	} else {
+		prev, next := limit, limit*0.9
+		slowStart = (prev + next) / 2
+		limit = next
+	}
+}
 ```
