@@ -127,3 +127,7 @@ func aimdSlowerStartWithScaleBack() {
 	}
 }
 ```
+
+
+#### 7. Also look into other TCP congestion algorithms, like HyStart
+https://coder.com/blog/delivering-5x-faster-throughput-in-coder-2-12-0 
